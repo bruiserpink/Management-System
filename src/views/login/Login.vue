@@ -1,12 +1,16 @@
 <template>
   <div class="login_container">
-    <div class="login_box"></div>
+    <login-box></login-box>
   </div>
 </template>
 
 <script>
+  import LoginBox from "./childCpn/LoginBox";
   export default {
-    name: "Login"
+    name: "Login",
+    components: {
+      LoginBox
+    }
   }
 </script>
 
@@ -14,16 +18,5 @@
   .login_container {
     background: #2b4b6b;
     height: 100vh;
-    position: relative;
-    .login_box{
-      width: 450px;
-      height: 300px;
-      background: #fff;
-      border-radius: 3px;
-      left: 50%;
-      top: 50%;
-      position: absolute;
-      transform: translate(-50%,-50%);
-    }
   }
 </style>
