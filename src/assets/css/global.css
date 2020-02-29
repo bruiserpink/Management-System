@@ -7,12 +7,12 @@ body,
   padding: 0;
   min-width: 1366px;
 }
-
 .el-breadcrumb {
-  margin-bottom: 15px;
-  font-size: 12px;
+  height: 46px;
+  line-height: 46px !important;
+  margin-left: 20px;
+  font-size: 15px !important;
 }
-
 .el-card {
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15) !important;
 }
@@ -36,4 +36,10 @@ body,
 
 .ql-editor {
   min-height: 300px;
+}
+.no-select {
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
 }

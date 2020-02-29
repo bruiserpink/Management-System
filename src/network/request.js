@@ -6,11 +6,13 @@ export function request(config) {
   })
   //axios拦截器
   //1.请求拦截器
-  /*  instance.interceptors.request.use(config=>{
+    instance.interceptors.request.use(config=>{
+      //为请求头对象添加token的值
+      config.headers.Authorization = window.sessionStorage.getItem('token');
       return config;
     },err=>{
       console.log(err);
-    });*/
+    });
   /*  //2.响应拦截器
     instance.interceptors.response.use(res=>{
       return res;
