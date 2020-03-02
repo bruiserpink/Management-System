@@ -3,14 +3,17 @@ import Element from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 //模块组件
 import {Form,FormItem,Input,Button,Menu,Submenu,MenuItem,Aside,
-  Breadcrumb,BreadcrumbItem,Card,Row,Col} from "element-ui"
+  Breadcrumb,BreadcrumbItem,Card,Row,Col,Table,TableColumn,Switch,
+  Tooltip,Pagination,Dialog} from "element-ui"
 //全局挂载在Vue实例上的组件
-import {Message} from "element-ui"
+import {Message,MessageBox} from "element-ui"
 const ELCpnList = [Form,FormItem,Input,Button,Menu,Submenu,MenuItem,Aside,
-  Breadcrumb,BreadcrumbItem,Card,Row,Col]
+  Breadcrumb,BreadcrumbItem,Card,Row,Col,Table,TableColumn,Switch,
+  Tooltip,Pagination,Dialog]
 //模块组件实例化,
 ELCpnList.some((item) => {
   Vue.use(item);
 })
 //挂载全局组件
-Vue.prototype.$message = Message
+Vue.prototype.$message = Message;
+Vue.prototype.$confirm = MessageBox.confirm;
