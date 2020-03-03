@@ -35,4 +35,18 @@ export function DeleteUserInfo(DeleteUserId) {
     method: 'delete'
   })
 }
+export function GetRolesList() {
+  return request({
+    url: '/roles'
+  })
+}
+export function PutNewRole(userId,roleId) {
+  return request({
+    url: `/users/${userId}/role`,
+    method: 'put',
+    data: {
+      rid: roleId
+    }
+  })
+}
 

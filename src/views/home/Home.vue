@@ -3,7 +3,9 @@
     <home-header></home-header>
     <div class="container">
       <home-aside class="aside" :menuList="menuList"></home-aside>
-      <home-main class="main"></home-main>
+      <el-scrollbar class="scroll">
+        <home-main class="main"></home-main>
+      </el-scrollbar>
     </div>
   </div>
 </template>
@@ -12,11 +14,13 @@
   import homeHeader from "./childCpn/header/Header";
   import homeMain from "./childCpn/main/Main";
   import homeAside from "./childCpn/aside/Aside";
+  import BetterScroll from "components/better-scroll/BetterScroll";
 
   import {getMenuData} from "network/home";
   export default {
     name: "Home",
     components: {
+      BetterScroll,
       homeHeader,
       homeMain,
       homeAside
@@ -49,8 +53,13 @@
     .container {
       width: 100%;
       display: flex;
-      .main {
+      .scroll {
         flex: 1;
+        height: 92vh;
+      }
+      .el-scrollbar__wrap
+      {
+        overflow-x: hidden;
       }
     }
   }

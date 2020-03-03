@@ -1,11 +1,14 @@
 <template>
   <div class="users">
+    <!--面包屑导航栏-->
     <el-breadcrumb  separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
       <el-breadcrumb-item :to="{ path: '/welcome' }">用户管理</el-breadcrumb-item>
       <el-breadcrumb-item :to="{ path: '/users' }">用户列表</el-breadcrumb-item>
     </el-breadcrumb>
+    <!--主体card-->
     <el-card class="box-card">
+      <!--搜索框-->
       <el-row :gutter="20">
         <el-col :span="8">
           <el-input placeholder="请输入内容" v-model="queryInfo.query"
@@ -20,6 +23,7 @@
         </el-col>
         <el-col :span="6"></el-col>
       </el-row>
+      <!--主体表格栏-->
       <el-table :data="userList" border stripe>
         <el-table-column type="index" label="序号" width="50px"></el-table-column>
         <el-table-column label="姓名" prop="username"></el-table-column>
@@ -41,7 +45,8 @@
             <el-button type="danger" icon="el-icon-delete" size="mini"
             @click="removeUser(scope.row.id)"></el-button>
             <el-tooltip content="分配角色" placement="top" effect="dark" :enterable="false" >
-              <el-button type="warning" icon="el-icon-setting" size="mini"></el-button>
+              <el-button type="warning" icon="el-icon-setting" size="mini"
+              @click="handleSetRole(scope.row)"></el-button>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -100,12 +105,33 @@
         <el-button type="primary" @click="determineReUserInfo">确 定</el-button>
       </span>
     </el-dialog>
+    <!--分配角色的对话框-->
+    <el-dialog :modal-append-to-body='false' title="分配角色"
+               :visible.sync="isShowRoleDialog"
+               width="50%" @close="resetRolesDialog">
+      <div>
+        <p>{{setRoleUserInfo.username}}</p>
+        <p>{{setRoleUserInfo.role_name}}</p>
+        <p>分配新角色:
+          <el-select v-model="selectedRoleId" placeholder="请选择">
+            <el-option v-for="item in RolesTree" :key="item.id" :label="item.roleName"
+            :value="item.id">
+
+            </el-option>
+          </el-select>
+        </p>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="isShowRoleDialog = false">取 消</el-button>
+        <el-button type="primary" @click="setRole">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
   import {getUsersMenuData,PutUserState,PutNewUserInfo,PutModifyUserInfo,
-    DeleteUserInfo} from "network/usersMenu";
+    DeleteUserInfo,GetRolesList,PutNewRole} from "network/usersMenu";
 
   export default {
     name: "User",
@@ -152,8 +178,16 @@
           username: "",
           email: '',
           mobile: ''
-        }
+        },
+        isShowRoleDialog: false,
+        RolesTree: [],
+        setRoleUserInfo: {},
+        selectedRoleId: ''
       }
+    },
+    created() {
+      //获取users列表数据
+      this._getUsersMenuData(this.queryInfo);
     },
     methods: {
       //获取整个用户表格数据的方法
@@ -211,8 +245,8 @@
           }else {
             //添加信息到数据库
             PutNewUserInfo(this.addUserInfo).then(res => {
-              if(res.status !== 201) {
-                return this.$message.error("添加用户失败");
+              if(res.data.meta.status !== 201) {
+                return this.$message.error(res.data.meta.msg);
               }else {
                 //隐藏弹窗
                 this.showDialog = false;
@@ -314,15 +348,53 @@
             callback(new Error('请输入合法的手机号码'))
           }
         }, 100)
+      },
+      //监听分配角色按钮的点击事件
+      handleSetRole(setRoleUserInfo) {
+        //保存要分配角色的用户信息
+        this.setRoleUserInfo = setRoleUserInfo;
+        //获取所有的角色列表
+        GetRolesList().then(res => {
+          if(res.data.meta.status !== 200) {
+            return this.$message.error(res.data.data.meta.msg);
+          }else {
+            this.RolesTree = res.data.data;
+          }
+        }).catch(err => {
+          console.log(err);
+        })
+        this.isShowRoleDialog = true
+      },
+      resetRolesDialog() {
+        this.selectedRoleId = '';
+        this.setRoleUserInfo = {}
+      },
+      //点击确定按钮，分配角色
+      setRole() {
+        if(!this.selectedRoleId){
+          return this.$message.error('请选择要的分配的角色')
+        }
+        //提交新的角色信息到当前用户
+        PutNewRole(this.setRoleUserInfo.id,this.selectedRoleId).then(res => {
+          if(res.data.meta.status !== 200) {
+            return this.$message.error(res.data.meta.msg);
+          }
+          /* const selectRole = this.RolesTree.find(item => {
+            return item.id === res.data.data.rid;
+          })
+          this.userList.role_name = selectRole.roleName;*/
+          this._getUsersMenuData(this.queryInfo);
+          this.isShowRoleDialog = false;
+        }).catch(err => {
+          console.log(err);
+        })
       }
-    },
-    created() {
-      //获取users列表数据
-      this._getUsersMenuData(this.queryInfo);
     }
   }
 </script>
 
 <style scoped>
-
+  .scroll {
+    height: 50vh;
+  }
 </style>

@@ -13,6 +13,5 @@
 <style scoped lang="less">
   .main {
     background: #EAEDF1;
-    height: 92vh;
   }
 </style>
