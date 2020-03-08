@@ -4,12 +4,12 @@ import 'element-ui/lib/theme-chalk/index.css'
 import {
   Form, FormItem, Input, Button, Menu, Submenu, MenuItem, Aside,
   Breadcrumb, BreadcrumbItem, Card, Row, Col, Table, TableColumn, Switch,
-  Tooltip, Pagination, Dialog, Tag, Tree, Scrollbar, Select,Option} from "element-ui"
+  Tooltip, Pagination, Dialog, Tag, Tree, Scrollbar, Select,Option,Cascader} from "element-ui"
 //全局挂载在Vue实例上的组件
 import {Message,MessageBox} from "element-ui"
 const ELCpnList = [Form,FormItem,Input,Button,Menu,Submenu,MenuItem,Aside,
   Breadcrumb,BreadcrumbItem,Card,Row,Col,Table,TableColumn,Switch,
-  Tooltip,Pagination,Dialog,Tag,Tree,Scrollbar,Select,Option]
+  Tooltip,Pagination,Dialog,Tag,Tree,Scrollbar,Select,Option,Cascader]
 //模块组件实例化,
 ELCpnList.some((item) => {
   Vue.use(item);

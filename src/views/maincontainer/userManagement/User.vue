@@ -110,16 +110,14 @@
                :visible.sync="isShowRoleDialog"
                width="50%" @close="resetRolesDialog">
       <div>
-        <p>{{setRoleUserInfo.username}}</p>
-        <p>{{setRoleUserInfo.role_name}}</p>
-        <p>分配新角色:
+        <div class="text-line"><el-tag type="info">用户名称:</el-tag>{{setRoleUserInfo.username}}</div>
+        <div class="text-line"><el-tag type="info">角色描述:</el-tag>{{setRoleUserInfo.role_name}}</div>
+        <div class="text-line"><el-tag type="info">分配角色:</el-tag>
           <el-select v-model="selectedRoleId" placeholder="请选择">
             <el-option v-for="item in RolesTree" :key="item.id" :label="item.roleName"
-            :value="item.id">
-
-            </el-option>
+            :value="item.id"></el-option>
           </el-select>
-        </p>
+        </div>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="isShowRoleDialog = false">取 消</el-button>
@@ -393,8 +391,18 @@
   }
 </script>
 
-<style scoped>
+<style scoped lang="less">
   .scroll {
     height: 50vh;
+  }
+  .text-line {
+    margin-top: 10px;
+    height: 40px;
+    line-height: 40px;
+    font-size: 16px;
+    .el-tag {
+      margin-right: 10px;
+      font-size: 16px;
+    }
   }
 </style>
