@@ -44,3 +44,11 @@ export function deleteCateAttributes(cateId,attrId) {
     method: 'delete',
   })
 }
+//提交修改后的参数属性的方法
+export function putNewAttrInfo(cateId,attrId,putInfo) {
+  return request({
+    url: `/categories/${cateId}/attributes/${attrId}`,
+    method: 'put',
+    data: putInfo
+  })
+}

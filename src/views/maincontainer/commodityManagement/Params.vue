@@ -31,7 +31,19 @@
           @click="showAddDialog = true">添加参数</el-button>
           <!--动态参数展示表格-->
           <el-table :data="manyTableData" border stripe>
-            <el-table-column type="expand" ></el-table-column>
+            <el-table-column type="expand" >
+              <!--显示参数信息的列表-->
+              <template slot-scope="scope">
+                <el-tag v-for="(item,index) in scope.row.attr_vals"
+                :key="index" closable @close="deleteAttrInfo(index,scope.row)">{{item}}</el-tag>
+                <el-input class="input-new-tag" v-if="scope.row.showNewTagInput"
+                    autofocus v-model="scope.row.inputValue" ref="saveTagInput" size="small"
+                    @keyup.enter.native="handleInputConfirm(scope.row)" @blur="handleInputConfirm(scope.row)">
+                </el-input>
+                <el-button v-else class="button-new-tag" size="small"
+                           @click="addNewTag(scope.row)">+ New Tag</el-button>
+              </template>
+            </el-table-column>
             <el-table-column type="index" label="序号" width="50px"></el-table-column>
             <el-table-column label="参数名称" prop="attr_name"></el-table-column>
             <el-table-column label="操作">
@@ -49,7 +61,20 @@
           @click="showAddDialog = true">添加属性</el-button>
           <!--静态属性展示表格-->
           <el-table :data="onlyTableData" border stripe>
-            <el-table-column type="expand"></el-table-column>
+            <el-table-column type="expand">
+              <!--显示参数信息的列表-->
+              <template slot-scope="scope">
+                <el-tag v-for="(item,index) in scope.row.attr_vals"
+                        :key="index" closable @close="deleteAttrInfo(index,scope.row)">{{item}}</el-tag>
+                <el-input class="input-new-tag" v-if="scope.row.showNewTagInput"
+                          v-model="scope.row.inputValue" ref="saveTagInput" size="small"
+                          @keyup.enter.native="handleInputConfirm(scope.row)"
+                          @blur="handleInputConfirm(scope.row)">
+                </el-input>
+                <el-button v-else class="button-new-tag" size="small"
+                           @click="addNewTag(scope.row)">+ New Tag</el-button>
+              </template>
+            </el-table-column>
             <el-table-column type="index"  label="序号" width="50px"></el-table-column>
             <el-table-column label="属性名称" prop="attr_name"></el-table-column>
             <el-table-column label="操作">
@@ -99,7 +124,7 @@
 
 <script>
   import {getGoodsCateData,getCateAttributes,putCateAttributes,getCateAttributesInfo,
-    putCateAttributesInfo,deleteCateAttributes} from 'network/cate_params'
+    putCateAttributesInfo,deleteCateAttributes,putNewAttrInfo} from 'network/cate_params'
   export default {
     name: "params",
     data() {
@@ -176,10 +201,33 @@
           if(res.data.meta.status !== 200) {
             return this.$message.error(res.data.meta.msg);
           }
+          //参数的属性信息保存在参数的attr_vals中，且该值为一个由,隔开的字符串
+          res.data.data.forEach(item => {
+            item.attr_vals = item.attr_vals ? item.attr_vals.split(',') : [];
+            //控制添加参数内容的input显示与隐藏的属性
+            item.showNewTagInput = false;
+            //添加参数内容的input绑定的值
+            item.inputValue = ''
+          });
           if(this.activeName === 'only') {
             this.onlyTableData = res.data.data;
           }else {
             this.manyTableData = res.data.data;
+          }
+        }).catch(err => {
+        })
+      },
+      //提交参数属性到服务器的方法
+      _putNewAttrInfo(row) {
+        //把新数组转换成字符串发送到服务器进行保存
+        putNewAttrInfo(this.selectCateId,row.attr_id,{
+          attr_name: row.attr_name,
+          attr_sel: row.attr_sel,
+          //将修改后的保存参数属性的数组转化成空格隔开的字符串
+          attr_vals: row.attr_vals.join(','),
+        }).then(res => {
+          if(res.data.meta.status !== 200) {
+            return this.$message.error(res.data.meta.msg);
           }
         }).catch(err => {
           console.log(err);
@@ -270,6 +318,35 @@
         }).catch(() => {
 
         })
+      },
+      //监听添加参数信息tag的输入框的enter和blur事件
+      handleInputConfirm(row) {
+        console.log(row.attr_vals.join(','));
+        //如果在失去焦点后，输入框的内容为空或只有空格，那么将其清空
+        if(row.inputValue.trim().length === 0) {
+          row.inputValue = '';
+          row.showNewTagInput = false
+        }else {
+          //如果不为空，那么就将输入内容进行添加到保存tags标签属性的数组中
+          row.attr_vals.push(row.inputValue.trim());
+          this._putNewAttrInfo(row);
+          row.inputValue = '';
+        }
+      },
+      //监听添加参数属性的点击事件
+      addNewTag(row) {
+        row.showNewTagInput = true;
+        //自动获取焦点的方法。$nextTick方法是在元素被重新渲染后执行函数
+        this.$nextTick(() => {
+          this.$nextTick( _ => {
+            this.$refs.saveTagInput.$refs.input.focus();
+          });
+        })
+      },
+      //删除参数属性的方法
+      deleteAttrInfo(index,row) {
+        row.attr_vals.splice(index,1);
+        this._putNewAttrInfo(row);
       }
     },
     computed: {
@@ -281,12 +358,18 @@
   }
 </script>
 
-<style scoped>
+<style scoped lang="less">
   .cate_opt {
     margin: 15px 0;
   }
   .el-cascader {
     width: 400px;
     margin-left: 15px;
+  }
+  .el-tag {
+    margin: 5px;
+  }
+  .input-new-tag {
+    width: 120px;
   }
 </style>
