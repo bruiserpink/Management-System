@@ -37,7 +37,7 @@
     },
     data() {
       return {
-        iconsList: ['icon-userManagement','icon-tijikongjian','icon-shangpin','icon-danju','icon-baobiao'],
+        iconsList: ['icon-users','icon-tijikongjian','icon-shangpin','icon-danju','icon-baobiao'],
         isCollapse: false,
         activePath: ''
       }

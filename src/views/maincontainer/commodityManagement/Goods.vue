@@ -27,7 +27,7 @@
         <el-table-column label="商品重量(g)" prop="goods_weight" width="95px"></el-table-column>
         <el-table-column label="创建时间" prop="add_time" width="140px">
           <template slot-scope="scope">
-            {{scope.row.add_time | showDate}}
+            {{scope.row.add_time | formatDate}}
           </template>
         </el-table-column>
         <el-table-column label="操作" width="140px">
@@ -128,7 +128,7 @@
       }
     },
     filters: {
-      showDate: function(value) {
+      formatDate: function(value) {
         let date = new Date(value*1000);
         return formatDate(date, 'yyyy/MM/dd hh:mm:ss')
       }

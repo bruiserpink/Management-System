@@ -21,7 +21,7 @@ body,
 
 .el-table {
   margin-top: 15px;
-  font-size: 12px;
+  font-size: 12px !important;
 }
 
 .el-pagination {
