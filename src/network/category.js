@@ -6,10 +6,16 @@ export function  getCategoriesMenuData(queryInfo) {
     params: queryInfo
   })
 }
-export function  postNewCategoriesInfo(addCateForm) {
+export function  postNewCategories(addCateForm) {
   return request({
     url: '/categories',
     data: addCateForm,
     method: 'post'
+  })
+}
+export function  deleteCategory(cateId) {
+  return request({
+    url: `/categories/${cateId}`,
+    method: 'delete'
   })
 }

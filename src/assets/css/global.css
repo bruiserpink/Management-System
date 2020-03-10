@@ -33,9 +33,13 @@ body,
 }
 
 .el-step__title {
-  font-size: 13px;
+  font-size: 13px !important;
 }
-
+/*清除自定义el-scroll的横向滚动条，因为一些组件本身使用到了此组件，
+所以在使用此样式时，给scrollbar加一个类scroll指定其内部样式*/
+.scroll .el-scrollbar__wrap{
+  overflow-x: hidden !important;
+}
 .ql-editor {
   min-height: 300px;
 }

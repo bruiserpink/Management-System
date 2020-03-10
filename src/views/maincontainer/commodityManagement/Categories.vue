@@ -33,13 +33,13 @@
           <el-button type="primary" icon="el-icon-edit" size="mini"
                      @click="editDialog(scope.row)">编辑</el-button>
           <el-button type="danger" icon="el-icon-delete" size="mini"
-                     @click="removeDialog(scope.row.id)">删除</el-button>
+                     @click="removeDialog(scope.row)">删除</el-button>
         </template>
       </tree-table>
       <!--分页区域-->
       <el-pagination
               :page-sizes="[2, 3, 5, 10]" @current-change="handleCurrentChange"
-              :page-size="queryInfo.pagesize" @size-change="handleSizeChange()"
+              :page-size="queryInfo.pagesize" @size-change="handleSizeChange"
               layout="total, sizes, prev, pager, next, jumper"
               :current-page="queryInfo.pagenum" :total="total">
       </el-pagination>
@@ -76,7 +76,7 @@
 </template>
 
 <script>
-  import {getCategoriesMenuData,postNewCategoriesInfo} from 'network/category'
+  import {getCategoriesMenuData,postNewCategories,deleteCategory} from 'network/category'
   export default {
     name: "categories",
     data() {
@@ -192,7 +192,7 @@
           if(!valid) {
             return
           }
-          postNewCategoriesInfo(this.addCateForm).then(res => {
+          postNewCategories(this.addCateForm).then(res => {
             if(res.data.meta.status !==201) {
               return this.$message.error(res.data.meta.msg)
             }
@@ -207,8 +207,24 @@
 
       },
       //点击删除操作的触发事件
-      removeDialog() {
+      removeDialog(row) {
+        const cateId = row.cat_id;
+        this.$confirm('此操作将删除该分类，是否继续?','提示',{
+          confirmButtonText: "确定",
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          deleteCategory(cateId).then(res => {
+            if(res.data.meta.status !== 200) {
+              return this.$message.error(res.data.meta.msg);
+            }
+            this._getCategoriesMenuData(this.queryInfo);
+          }).catch(err => {
+            console.log(err);
+          })
+        }).catch( _ => {
 
+        })
       },
       //分页pagesize发生改变时触发
       handleSizeChange(newsize) {

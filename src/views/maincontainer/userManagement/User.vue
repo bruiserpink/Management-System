@@ -13,7 +13,7 @@
         <el-col :span="8">
           <el-input placeholder="请输入内容" v-model="queryInfo.query"
                     class="input-with-select" clearable
-                    @input="_getUsersMenuData(queryInfo)">
+                    @input="searchUser">
             <el-button slot="append" icon="el-icon-search"
                        @click="_getUsersMenuData(queryInfo)"></el-button>
           </el-input>
@@ -57,7 +57,7 @@
               @current-change="handleCurrentChange"
               :current-page="queryInfo.pagenum"
               :page-sizes="[2, 3, 4, 5]"
-              :page-size="100"
+              :page-size="queryInfo.pagesize"
               layout="total, sizes, prev, pager, next, jumper"
               :total="total">
       </el-pagination>
@@ -130,7 +130,7 @@
 <script>
   import {getUsersMenuData,PutUserState,PutNewUserInfo,PutModifyUserInfo,
     DeleteUserInfo,GetRolesList,PutNewRole} from "network/usersMenu";
-
+  import {debounce} from 'Bcommon/utils'
   export default {
     name: "User",
     data() {
@@ -196,6 +196,11 @@
         }).catch(err => {
           console.log(err);
         })
+      },
+      //对搜索框的input事件进行防抖处理
+      searchUser() {
+        const search = debounce(this._getUsersMenuData,200);
+        search(this.queryInfo);
       },
       //当分页功能的page-size个数出现变化时触发
       handleSizeChange(newSize) {

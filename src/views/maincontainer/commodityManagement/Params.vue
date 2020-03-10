@@ -62,10 +62,11 @@
           <!--静态属性展示表格-->
           <el-table :data="onlyTableData" border stripe>
             <el-table-column type="expand">
-              <!--显示参数信息的列表-->
+              <!--显示属性信息的列表-->
               <template slot-scope="scope">
                 <el-tag v-for="(item,index) in scope.row.attr_vals"
-                        :key="index" closable @close="deleteAttrInfo(index,scope.row)">{{item}}</el-tag>
+                        :key="index" closable @close="deleteAttrInfo(index,scope.row)"
+                        :disable-transitions="false">{{item}}</el-tag>
                 <el-input class="input-new-tag" v-if="scope.row.showNewTagInput"
                           v-model="scope.row.inputValue" ref="saveTagInput" size="small"
                           @keyup.enter.native="handleInputConfirm(scope.row)"
@@ -136,7 +137,7 @@
         activeName: 'many',
         isSelected: true,
         //选择的二级/三级分类的id
-        selectCateId: 3098,
+        selectCateId: 1,
         //动态参数的列表数据
         manyTableData: [],
         //静态属性的列表数据
@@ -196,6 +197,13 @@
       },
       //获取参数列表数据的方法
       _getCateAttributes() {
+        //判断如果选中的不是三级分类就将其数据质控
+        if(this.selectKeys.length !== 3) {
+          this.selectKeys = [];
+          this.manyTableData = [];
+          this.onlyTableData = [];
+          return;
+        }
         //获取参数
         getCateAttributes(this.selectCateId,this.activeName).then(res => {
           if(res.data.meta.status !== 200) {
@@ -321,7 +329,6 @@
       },
       //监听添加参数信息tag的输入框的enter和blur事件
       handleInputConfirm(row) {
-        console.log(row.attr_vals.join(','));
         //如果在失去焦点后，输入框的内容为空或只有空格，那么将其清空
         if(row.inputValue.trim().length === 0) {
           row.inputValue = '';
@@ -331,6 +338,7 @@
           row.attr_vals.push(row.inputValue.trim());
           this._putNewAttrInfo(row);
           row.inputValue = '';
+          row.showNewTagInput = false
         }
       },
       //监听添加参数属性的点击事件
@@ -354,7 +362,7 @@
       titleText() {
         return this.activeName === 'many' ? '动态参数' : '静态属性'
       }
-    }
+    },
   }
 </script>
 

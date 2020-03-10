@@ -11,6 +11,7 @@ import Reports from "../views/maincontainer/dataStatistics/Reports";
 import Orders from "../views/maincontainer/orderManagement/Orders";
 import Rights from "../views/maincontainer/privilegeManagement/Rights";
 import Roles from "../views/maincontainer/privilegeManagement/Roles";
+import AddGoods from "../views/maincontainer/commodityManagement/AddGoods";
 
 
 import el from "element-ui/src/locale/lang/el";
@@ -45,6 +46,9 @@ const routes = [
       },{
         path: '/goods',
         component: Goods
+      },{
+      path: '/goods/add',
+      component: AddGoods
       },{
         path: '/params',
         component: Params

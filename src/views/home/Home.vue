@@ -57,9 +57,8 @@
         flex: 1;
         height: 92vh;
       }
-      .el-scrollbar__wrap
-      {
-        overflow-x: hidden;
+      .main {
+        padding-bottom: 20px;
       }
     }
   }
