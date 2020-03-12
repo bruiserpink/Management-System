@@ -29,7 +29,7 @@ module.exports = {
         'vue-router': 'VueRouter',
         axios: 'axios',
         echarts: 'echarts',
-        nprogress: 'Nprogress',
+        nprogress: 'NProgress',
         'vue-quill-editor': 'VueQuillEditor'
       })
     })
