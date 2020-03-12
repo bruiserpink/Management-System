@@ -1,18 +1,19 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Login from "views/login/Login";
-import Home from "views/home/Home"
-import Welcome from "../views/home/childCpn/welcome/Welcome";
-import User from "../views/maincontainer/userManagement/User";
-import Categories from "../views/maincontainer/commodityManagement/Categories";
-import Goods from "../views/maincontainer/commodityManagement/Goods";
-import Params from "../views/maincontainer/commodityManagement/Params";
-import Reports from "../views/maincontainer/dataStatistics/Reports";
-import Orders from "../views/maincontainer/orderManagement/Orders";
-import Rights from "../views/maincontainer/privilegeManagement/Rights";
-import Roles from "../views/maincontainer/privilegeManagement/Roles";
-import AddGoods from "../views/maincontainer/commodityManagement/AddGoods";
 
+//使用路由懒加载
+const Login = ()=>import(/*webpackChunkName: "login_home_welcome"*/ 'views/login/Login');
+const Home = ()=>import(/*webpackChunkName: "login_home_welcome"*/ 'views/home/Home');
+const Welcome = ()=>import(/*webpackChunkName: "login_home_welcome"*/'views/home/childCpn/welcome/Welcome');
+const User = ()=>import('views/maincontainer/userManagement/User');
+const Categories = ()=>import('views/maincontainer/commodityManagement/Categories');
+const Goods = ()=>import('views/maincontainer/commodityManagement/Goods');
+const Params = ()=>import('views/maincontainer/commodityManagement/Params');
+const Reports = ()=>import('views/maincontainer/dataStatistics/Reports');
+const Orders = ()=>import('views/maincontainer/orderManagement/Orders');
+const Rights = ()=>import('views/maincontainer/privilegeManagement/Rights');
+const Roles = ()=>import('views/maincontainer/privilegeManagement/Roles');
+const AddGoods = ()=>import('views/maincontainer/commodityManagement/AddGoods');
 
 import el from "element-ui/src/locale/lang/el";
 
