@@ -289,10 +289,13 @@
           //添加商品数据
           putNewGoodsInfo(deepCloneData).then(res => {
             if(res.data.meta.status !== 201) {
-              return
+              return this.$message.error(res.data.meta.msg)
             }
+            //由于在后端在获取数据时，未获取到商品的所属的cate_id属性，
+            //在编辑商品信息put时无法提交，所以在此处将该商品信息使用vuex进行状态共享
+            this.$store.commit('shareGoodsInfo',res.data.data);
             this.$message.success('添加商品成功');
-            console.log(res);
+            this.$refs.addForm.resetFields();
             this.$router.push('/goods');
           }).catch(err => {
             console.log(err);

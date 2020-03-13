@@ -25,6 +25,7 @@
         <el-table-column label="商品名称" prop="goods_name"></el-table-column>
         <el-table-column label="商品价格(元)" prop="goods_price"  width="95px"></el-table-column>
         <el-table-column label="商品重量(g)" prop="goods_weight" width="95px"></el-table-column>
+        <el-table-column label="商品数量" prop="goods_number" width="95px"></el-table-column>
         <el-table-column label="创建时间" prop="add_time" width="140px">
           <template slot-scope="scope">
             {{scope.row.add_time | formatDate}}
@@ -50,15 +51,49 @@
               :total="total">
       </el-pagination>
     </el-card>
+    <!--编辑商品信息的对话框-->
+    <el-dialog :modal-append-to-body='false' title="修改商品信息"
+               :visible.sync="isShowEditDialog"
+               width="50%" @close="resetDialog">
+      <el-form :model="goodsInfo" :rules="editFormRules" ref="goodsInfo"
+               label-width="100px" >
+        <el-form-item label="商品名称" prop="goods_name">
+          <el-input v-model="goodsInfo.goods_name"></el-input>
+        </el-form-item>
+        <el-form-item label="商品价格" prop="goods_price">
+          <el-input v-model="goodsInfo.goods_price"></el-input>
+        </el-form-item>
+        <el-form-item label="商品数量" prop="goods_number">
+          <el-input v-model="goodsInfo.goods_number"></el-input>
+        </el-form-item>
+        <el-form-item label="商品重量" prop="goods_weight">
+          <el-input v-model="goodsInfo.goods_weight"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="isShowEditDialog = false">取 消</el-button>
+        <el-button type="primary" @click="determineGoodsInfo">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-  import {getGoodsListData,deleteGoods} from 'network/goodsList'
+  import {getGoodsListData,deleteGoods,putEditGoodsInfo,
+  putGoodsAttr} from 'network/goodsList'
+  import {getCategoriesMenuData} from 'network/category'
   import {formatDate,debounce} from 'Bcommon/utils'
   export default {
     name: "goods",
     data() {
+      //定义验证非负数的表达式
+      var checkNumber = (rule, value, callback) => {
+        setTimeout(() => {
+          if (value <= 0 ) {
+            callback(new Error('此属性应该大于0'));
+          }
+        }, 1000);
+      };
       return {
         queryInfo: {
           query: '',
@@ -66,11 +101,51 @@
           pagesize: 5
         },
         goodsList: [],
-        total: 0
+        total: 0,
+        isShowEditDialog: false,
+        goodsInfo: {
+          goods_name: '',
+          goods_price: 0,
+          goods_number: 0,
+          goods_weight: 0
+        },
+        editFormRules: {
+          goods_name: [
+            {required: true,message: "请输入商品名称",trigger: "blur"},
+            {min:3,max:10,message: "商品名称应该为3-10个字符",trigger: "blur"}
+          ],
+          goods_price: [
+            {required: true,message: "请输入商品价格",trigger: "blur"},
+            {validator: checkNumber,trigger: "blur"}
+          ],
+          goods_number: [
+            {required: true,message: "请输入商品数量",trigger: "blur"},
+            {validator: checkNumber,trigger: "blur"}
+          ],
+          goods_weight: [
+            {required: true,message: "请输入商品重量",trigger: "blur"},
+            {validator: checkNumber,trigger: "blur"}
+          ],
+          publicCatId: 0
+        },
       }
     },
     activated() {
       this._getGoodsListData(this.queryInfo);
+      getCategoriesMenuData({
+          type: 3,
+          pagenum: 1,
+          pagesize: 1,
+        }).then(res => {
+        if (res.data.meta.status !== 200) {
+          return this.$message.error(res.data.meta.msg)
+        }
+        //将第一个分类的三级分类的id作为公用分类id
+        this.publicCatId = res.data.data.result[0].children[0].children[0].cat_id;
+
+      }).catch(err => {
+        console.log(err);
+      })
     },
     methods: {
       _getGoodsListData(queryInfo) {
@@ -91,7 +166,33 @@
       },
       //监听编辑按钮点击事件
       handleEdit(row) {
-        console.log(row);
+        this.isShowEditDialog = true;
+        //获取保存在store里面的新添加的商品信息数组
+        const addGoodsArr = this.$store.state.GoodsDetailsInfo;
+        //查看当前数组是不是被新添加的，如果是被添加的获得该完整信息
+        const myAllData = addGoodsArr.find(item => {
+          return row.goods_id === item.goods_id;
+        });
+        //如果不是新创建的商品，只能给他制定一个已经存在的分类id
+        row.cat_id = this.publicCatId.toString();
+        //如果myAllData存在，那么就说明该商品为新商品，给他全部信息.
+        this.goodsInfo = myAllData || row;
+      },
+      //监听编辑商品信息的dialog的确定事件
+      determineGoodsInfo() {
+        putEditGoodsInfo(this.goodsInfo).then(res => {
+          if(res.data.meta.status !== 200) {
+            return this.$message.error('修改商品信息失败');
+          }
+          this._getGoodsListData(this.queryInfo);
+        }).catch(err => {
+          console.log(err);
+        } )
+        this.isShowEditDialog = false;
+      },
+      //重置编辑dialog的表单内容的方法
+      resetDialog() {
+        this.$refs.goodsInfo.resetFields();
       },
       //监听删除按钮点击事件
       deleteGoodById(goodsId) {
@@ -124,7 +225,7 @@
         this._getGoodsListData(this.queryInfo);
       },
       goAddpage() {
-        this.$router.push('/goods/add')
+        this.$router.push('/goods/add');
       }
     },
     filters: {

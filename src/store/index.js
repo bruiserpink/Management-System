@@ -4,13 +4,12 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    token: ""
+    GoodsDetailsInfo: [],
   },
   mutations: {
-    setToken(state,token) {
-      //修改token的值，但是在页面发生刷新以后，这个token的值会被销毁，
-      state.token = token;
-    },
+    shareGoodsInfo(state,payload) {
+      state.GoodsDetailsInfo.push(payload);
+    }
   },
   actions: {
   },

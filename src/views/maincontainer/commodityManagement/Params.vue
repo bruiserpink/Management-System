@@ -152,7 +152,7 @@
         addFormRules: {
           attr_name: [
             {required: true,message: "请输入参数名",trigger: "blur"},
-            {min:3,max:10,message: "参数名应该为3-10个字符",trigger: "blur"}
+            {min:2,max:10,message: "参数名应该为2-10个字符",trigger: "blur"}
           ]
         },
         //是否展示编辑参数内容的对话窗
@@ -161,7 +161,7 @@
         editFormRules: {
           attr_name: [
             {required: true,message: "请输入参数名",trigger: "blur"},
-            {min:3,max:10,message: "参数名应该为3-10个字符",trigger: "blur"}
+            {min:3,max:10,message: "参数名应该为2-10个字符",trigger: "blur"}
           ]
         },
       }

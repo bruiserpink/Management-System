@@ -6,13 +6,13 @@ import {
   Breadcrumb, BreadcrumbItem, Card, Row, Col, Table, TableColumn, Switch,
   Tooltip, Pagination, Dialog, Tag, Tree, Scrollbar, Select, Option, Cascader,
   Alert, TabPane, Tabs, Steps, Step, Checkbox, CheckboxGroup, Upload, Timeline,
-  TimelineItem} from "element-ui"
+  TimelineItem,Link} from "element-ui"
 //全局挂载在Vue实例上的组件
 import {Message,MessageBox} from "element-ui"
 const ELCpnList = [Form,FormItem,Input,Button,Menu,Submenu,MenuItem,Aside,
   Breadcrumb,BreadcrumbItem,Card,Row,Col,Table,TableColumn,Switch,
   Tooltip,Pagination,Dialog,Tag,Tree,Scrollbar,Select,Option,Cascader,Alert,
-  TabPane,Tabs,Steps,Step,Checkbox,CheckboxGroup,Upload,Timeline,TimelineItem]
+  TabPane,Tabs,Steps,Step,Checkbox,CheckboxGroup,Upload,Timeline,TimelineItem,Link]
 //模块组件实例化,
 ELCpnList.some((item) => {
   Vue.use(item);

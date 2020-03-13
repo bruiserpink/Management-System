@@ -19,3 +19,12 @@ export function  deleteCategory(cateId) {
     method: 'delete'
   })
 }
+export function putEditCate(cateInfo) {
+  return request ({
+    url: `/categories/${cateInfo.cat_id}`,
+    method: 'put',
+    data: {
+      cat_name: cateInfo.cat_name
+    }
+  })
+}

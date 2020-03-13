@@ -72,11 +72,27 @@
         <el-button @click="determineAddCate" type="primary">确定</el-button>
       </span>
     </el-dialog>
+    <!--编辑分类信息的对话框-->
+    <el-dialog :modal-append-to-body='false' title="修改分类信息"
+               :visible.sync="isShowEditDialog"
+               width="50%" @close="resetDialog">
+      <el-form :model="cateInfo" :rules="addCateFormRules" ref="cateInfo"
+               label-width="100px" >
+        <el-form-item label="分类名称" prop="cat_name">
+          <el-input v-model="cateInfo.cat_name"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="isShowEditDialog = false">取 消</el-button>
+        <el-button type="primary" @click="determineEdit">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-  import {getCategoriesMenuData,postNewCategories,deleteCategory} from 'network/category'
+  import {getCategoriesMenuData,postNewCategories,deleteCategory,
+  putEditCate} from 'network/category'
   export default {
     name: "categories",
     data() {
@@ -124,7 +140,7 @@
         addCateFormRules: {
           cat_name: [
             {required: true,message: "请输入分类名称",trigger: "blur"},
-            {min:3,max:10,message: "分类名应该为3-10个字符",trigger: "blur"}
+            {min:2,max:10,message: "分类名应该为2-10个字符",trigger: "blur"}
           ]
         },
         //添加分类弹窗的选择结构数据
@@ -132,6 +148,11 @@
         //级联选择框的配置选项
         //保存被选中的级联选择项的id
         selectKeys: [],
+        isShowEditDialog: false,
+        cateInfo: {
+          cat_name: '',
+          cat_id: 0
+        }
       }
     },
     created() {
@@ -203,8 +224,23 @@
         });
       },
       //点击编辑操作的触发事件
-      editDialog() {
-
+      editDialog(row) {
+        this.isShowEditDialog = true;
+        this.cateInfo = row;
+      },
+      resetDialog() {
+        this.$refs.cateInfo.resetFields();
+      },
+      determineEdit() {
+        putEditCate(this.cateInfo).then(res => {
+          if(res.data.meta.status !== 200) {
+            return this.$message.error(res.data.meta.mag);
+          }
+          this._getCategoriesMenuData(this.queryInfo);
+          this.isShowEditDialog = false
+        }).catch(err => {
+          console.log(err);
+        })
       },
       //点击删除操作的触发事件
       removeDialog(row) {
@@ -222,7 +258,7 @@
           }).catch(err => {
             console.log(err);
           })
-        }).catch( _ => {
+        }).catch( () => {
 
         })
       },
