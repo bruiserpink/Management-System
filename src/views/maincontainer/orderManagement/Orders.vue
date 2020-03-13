@@ -10,9 +10,9 @@
         <el-col :span="8">
           <el-input placeholder="请输入内容" v-model="queryInfo.query"
                     class="input-with-select" @input="searchOrder"
-                    clearable @clear="_getOrdersData(this.queryInfo, {})">
+                    clearable @clear="_getOrdersData(queryInfo)">
             <el-button slot="append" icon="el-icon-search"
-                       @click="_getOrdersData(this.queryInfo, {})"></el-button>
+                       @click="_getOrdersData(queryInfo)"></el-button>
           </el-input>
         </el-col>
         <el-col :span="4">
@@ -61,7 +61,7 @@
     </el-card>
 
     <!--修改订单地址的对话框-->
-    <el-dialog  title="修改角色信息"
+    <el-dialog  title="修改地址信息"
                :visible.sync="isShowEditDialog"
                width="50%" @close="resetDialog">
       <el-form :model="addressForm" :rules="addressFormRules"

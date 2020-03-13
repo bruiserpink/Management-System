@@ -66,8 +66,6 @@
                   this.$message.success(res.data.meta.msg);
                   //2.保存token到sessionStorage中
                   window.sessionStorage.setItem('token',res.data.data.token);
-                  //3.将token放在router进行共享
-                  this.$store.commit("setToken",res.data.data.token);
                   //4.跳转页面到home
                   this.$router.push("/home");
                 }
